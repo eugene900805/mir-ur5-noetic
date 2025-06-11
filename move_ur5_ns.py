@@ -45,13 +45,13 @@ def move_pose(ns='', pose=None):
     ### 使用末端點位置控制
     pose_goal = move_group.get_current_pose().pose
     if pose:
-        pose_goal[0] = pose_goal.position.x 
-        pose_goal[1] = pose_goal.position.y 
-        pose_goal[2] = pose_goal.position.z 
-        pose_goal[3] = pose_goal.orientation.x
-        pose_goal[4] = pose_goal.orientation.y
-        pose_goal[5] = pose_goal.orientation.z
-        pose_goal[6] = pose_goal.orientation.w
+        pose_goal.position.x = pose[0] 
+        pose_goal.position.y = pose[1] 
+        pose_goal.position.z = pose[2]
+        pose_goal.orientation.x = pose[3]
+        pose_goal.orientation.y = pose[4]
+        pose_goal.orientation.z = pose[5]
+        pose_goal.orientation.w = pose[6]
 
     move_group.set_pose_target(pose_goal)
     move_group.go(wait=True)
