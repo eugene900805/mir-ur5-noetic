@@ -2,24 +2,28 @@
 # 0.037 0.0 0.58 cabinet_link -> ur5_base_link
 import sys
 import rospy
+import logging
 import moveit_commander
 import geometry_msgs.msg
 from math import pi
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, Twist, Pose, Point, Quaternion, PoseWithCovariance, Pose2D
+from scipy.spatial.transform import Rotation as R
+import numpy as np
+import time
 
 def move_joint(joint=None):
-    # 初始化 RobotCommander 與 MoveGroupCommander
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
-    group_name = "manipulator"  # UR5 預設的 group name
+    group_name = "manipulator" 
     move_group = moveit_commander.MoveGroupCommander(group_name)
 
-    # 設定最大速度比例與加速度比例
-    # move_group.set_max_velocity_scaling_factor(0.5)
-    # move_group.set_max_acceleration_scaling_factor(0.5)
+    # Set Max Velocity and Acc
+    move_group.set_max_velocity_scaling_factor(0.1)
+    move_group.set_max_acceleration_scaling_factor(0.1)
 
-    # 使用角度控制
+    # Control by joints
     joint_goal = move_group.get_current_joint_values()
+    # print(joint_goal)
 
     if joint:
         joint_goal[0] = joint[0]   # shoulder_pan_joint
@@ -33,50 +37,49 @@ def move_joint(joint=None):
     move_group.stop()
 
 def move_pose(pose=None):
-    global robot_x
-    global robot_y
-    # 初始化 RobotCommander 與 MoveGroupCommander
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
-    group_name = "manipulator"  # UR5 預設的 group name
+    group_name = "manipulator"
     move_group = moveit_commander.MoveGroupCommander(group_name)
 
-    # 設定最大速度比例與加速度比例
-    # move_group.set_max_velocity_scaling_factor(0.5)
-    # move_group.set_max_acceleration_scaling_factor(0.5)
+    # Set Max Velocity and Acc
+    move_group.set_max_velocity_scaling_factor(0.1)
+    move_group.set_max_acceleration_scaling_factor(0.1)
 
-    ### 使用末端點位置控制
-    pose_goal = move_group.get_current_pose().pose
-    if pose:
-        pose_goal.position.x = pose[0] + 0.337 + robot_x
-        pose_goal.position.y = pose[1] + 0.14 + robot_y
-        pose_goal.position.z = pose[2] + 0.8
-        pose_goal.orientation.x = pose[3]
-        pose_goal.orientation.y = pose[4]
-        pose_goal.orientation.z = pose[5]
-        pose_goal.orientation.w = pose[6]
+    # Obtain Current Position
+    current_pose = move_group.get_current_pose().pose
+    goal_pose = current_pose
     
-    move_group.set_pose_target(pose_goal)
+    if pose:
+        x, y, z = -pose[0]+0.337, -pose[1]+0.14, pose[2]+0.8
+        rx, ry, rz = pose[3], pose[4], pose[5]
+
+        r = R.from_euler('xyz', [rx,ry,rz]) * R.from_euler('z', np.pi)
+        quat = r.as_quat()
+
+        goal_pose = Pose()
+        goal_pose.position.x = x
+        goal_pose.position.y = y
+        goal_pose.position.z = z
+        goal_pose.orientation.x = quat[0]
+        goal_pose.orientation.y = quat[1]
+        goal_pose.orientation.z = quat[2]
+        goal_pose.orientation.w = quat[3]
+    
+    move_group.set_pose_target(goal_pose)
     move_group.go(wait=True)
     move_group.stop()
     move_group.clear_pose_targets()
 
     # rospy.sleep(1)
 
-def update_initial_pose(pose):
-    global robot_x
-    global robot_y
-
-    robot_x = pose.pose.pose.position.x
-    robot_y = pose.pose.pose.position.y
-
 if __name__ == '__main__':
     try:
-        # 初始化 moveit_commander 與 ROS 節點
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('ur5_moveit_commander_example1', anonymous=True)
-        rospy.Subscriber('/robot_pose', PoseWithCovarianceStamped, update_initial_pose)
-        move_pose()
+        # move_joint([0, 0, 0, 0, 0, 0])
+        # move_pose([0.46, 0.105, 0.427, 3.14, 0, 0]) # Value from UR5 panel
+        
         moveit_commander.roscpp_shutdown()
     except rospy.ROSInterruptException:
         pass
