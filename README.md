@@ -29,12 +29,12 @@ mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws/src/
 
 # clone mir_robot into the catkin workspace
-git clone https://github.com/eugene900805/mir_robot.git
-git clone https://github.com/eugene900805/universal_robot.git
-git clone https://github.com/eugene900805/moveit_config.git
-git clone https://github.com/eugene900805/Universal_Robots_ROS_Driver.git
-git clone https://github.com/eugene900805/robotiq_description.git
-git clone https://github.com/eugene900805/gazebo-pkgs.git
+git clone https://github.com/eugene900805/mir_robot.git && \
+git clone https://github.com/eugene900805/universal_robot.git && \
+git clone https://github.com/eugene900805/moveit_config.git && \
+git clone https://github.com/eugene900805/Universal_Robots_ROS_Driver.git && \
+git clone https://github.com/eugene900805/robotiq_description.git && \
+git clone https://github.com/eugene900805/gazebo-pkgs.git && \
 git clone https://github.com/eugene900805/general-message-pkgs.git
 
 # use rosdep to install all dependencies (including ROS itself)
