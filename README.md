@@ -1,24 +1,18 @@
 ﻿# mir-ur5-noetic with moveit
 
-### Preliminaries
-
-If you haven't already installed ROS on your PC, you need to add the ROS apt
-repository. This step is necessary for either binary or source install.
-
+### Install ROS Noetic
 ```
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
-sudo apt-get update -qq
+sudo apt install curl
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt install ros-noetic-desktop-full
 ```
 
-### Binary install
-
-For a binary install, it suffices to run this command:
+### Install moveit
 
 ```bash
-sudo apt install ros-noetic-mir-robot
 sudo apt install ros-noetic-moveit
-sudo apt-get install ros-noetic-object-recognition-msgs
 ```
 
 See the tables at the end of this README for a list of ROS distros for which
@@ -47,7 +41,7 @@ git clone https://github.com/eugene900805/general-message-pkgs.git
 sudo apt-get update -qq
 sudo apt-get install -qq -y python3-rosdep
 sudo rosdep init
-rosdep update
+rosdep update --include-eol-distros
 rosdep install --from-paths ./ -i -y --rosdistro noetic
 
 # build all packages in the catkin workspace
