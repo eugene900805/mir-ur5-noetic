@@ -36,7 +36,8 @@ git clone https://github.com/eugene900805/Universal_Robots_ROS_Driver.git && \
 git clone https://github.com/eugene900805/robotiq_description.git && \
 git clone https://github.com/eugene900805/gazebo-pkgs.git && \
 git clone https://github.com/eugene900805/general-message-pkgs.git && \
-git clone https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins.git
+git clone https://github.com/roboticsgroup/roboticsgroup_upatras_gazebo_plugins.git && \
+git clone https://github.com/nilseuropa/realsense_ros_gazebo.git
 
 
 # use rosdep to install all dependencies (including ROS itself)
