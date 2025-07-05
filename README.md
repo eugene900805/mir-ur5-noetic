@@ -78,6 +78,8 @@ rviz -d $(rospack find mir_navigation)/rviz/navigation.rviz
 roslaunch mir_ur5_gripper_moveit_config move_group.launch limited:=true
 roslaunch mir_ur5_gripper_moveit_config moveit_rviz.launch config:=true
 ```
+https://github.com/eugene900805/mir-ur5-noetic/blob/main/gazebo_single.jpg
+
 
 Multiple Robots
 ```bash
